@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="USER_HOME" value="${user.dir}/target/gatling" />
+    <timestamp key="bySecond" datePattern="yyyyMMdd.HHmmss" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+        <immediateFlush>false</immediateFlush>
+    </appender>
+    <appender name="ORDER" class="ch.qos.logback.core.FileAppender">
+        <param name="Threshold" value="DEBUG"/>
+        <file>${USER_HOME}/gatling-order-${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+    <appender name="LOGIN" class="ch.qos.logback.core.FileAppender">
+        <param name="Threshold" value="INFO"/>
+        <file>${USER_HOME}/gatling-login-${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+    <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
+        <param name="Threshold" value="ERROR"/>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${USER_HOME}/gatling-error-${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+    <appender name="ERROR_GATLING" class="ch.qos.logback.core.FileAppender">
+        <param name="Threshold" value="WARN"/>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${USER_HOME}/gatling-error-gatling-${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+    <appender name="CF-Cache-Status" class="ch.qos.logback.core.FileAppender">
+        <param name="Threshold" value="INFO"/>
+        <file>${USER_HOME}/gatling-cache-${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="LoginLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="LOGIN"/>
+    </logger>
+    <logger name="OrderLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="ORDER"/>
+    </logger>
+    <logger name="ConsoleLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="CacheLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="CF-Cache-Status"/>
+    </logger>
+
+    <root level="ERROR">
+        <appender-ref ref="ERROR"/>
+    </root>
+    <root level="WARN">
+        <appender-ref ref="ERROR_GATLING"/>
+    </root>
+
+    <if condition='property("runMode").contains("debug")'>
+        <then>
+            <logger name="io.gatling.http.engine.response" level="TRACE" />
+            <root level="WARN">
+                <appender-ref ref="CONSOLE"/>
+            </root>
+            <root level="ERROR">
+                <appender-ref ref="ERROR"/>
+            </root>
+        </then>
+    </if>
+
+</configuration>
